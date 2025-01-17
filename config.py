@@ -1,3 +1,5 @@
+import os
+
 HTTP_SERVER=False
 
 API_ID=22012880
