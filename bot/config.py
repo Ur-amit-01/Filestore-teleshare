@@ -40,8 +40,8 @@ class Config(BaseSettings):
     HOSTNAME: str = "0.0.0.0"  # noqa: S104
     HTTP_SERVER: bool = True
 
-    API_ID: int = 22012880
-    API_HASH: str = 5b0e07f5a96d48b704eb9850d274fe1d
+    API_ID: int = "22012880"
+    API_HASH: str = "5b0e07f5a96d48b704eb9850d274fe1d"
     BOT_TOKEN: str
     BOT_WORKER: int = 8
     BOT_SESSION: str = "Zaws-File-Share"
@@ -52,7 +52,7 @@ class Config(BaseSettings):
 
     # Bot main config
     RATE_LIMITER: bool = True
-    BACKUP_CHANNEL: int = -1002293450334
+    BACKUP_CHANNEL: int = "-1002293450334"
     ROOT_ADMINS_ID: list[int] = [7728066109,2031106491]
     PRIVATE_REQUEST: bool = True
     PROTECT_CONTENT: bool = True
