@@ -55,7 +55,7 @@ class Config(BaseSettings):
     BACKUP_CHANNEL: int = "-1002293450334"
     ROOT_ADMINS_ID: list[int] = [7728066109,2031106491]
     PRIVATE_REQUEST: bool = True
-    PROTECT_CONTENT: bool = True
+    PROTECT_CONTENT: bool = False
     FORCE_SUB_CHANNELS: list[int] = [-1002333723762]
     AUTO_GENERATE_LINK: bool = True
 
