@@ -40,23 +40,23 @@ class Config(BaseSettings):
     HOSTNAME: str = "0.0.0.0"  # noqa: S104
     HTTP_SERVER: bool = True
 
-    API_ID: int
-    API_HASH: str
+    API_ID: int = 22012880
+    API_HASH: str = 5b0e07f5a96d48b704eb9850d274fe1d
     BOT_TOKEN: str
     BOT_WORKER: int = 8
     BOT_SESSION: str = "Zaws-File-Share"
     BOT_MAX_MESSAGE_CACHE_SIZE: int = 100
 
-    MONGO_DB_URL: MongoSRVDsn
-    MONGO_DB_NAME: str = "Zaws-File-Share"
+    MONGO_DB_URL: MongoSRVDsn = "mongodb+srv://uramit0001:EZ1u5bfKYZ52XeGT@cluster0.qnbzn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    MONGO_DB_NAME: str = "Zaws-File-Share_test"
 
     # Bot main config
     RATE_LIMITER: bool = True
-    BACKUP_CHANNEL: int
-    ROOT_ADMINS_ID: list[int]
+    BACKUP_CHANNEL: int = -1002293450334
+    ROOT_ADMINS_ID: list[int] = [7728066109,2031106491]
     PRIVATE_REQUEST: bool = True
     PROTECT_CONTENT: bool = True
-    FORCE_SUB_CHANNELS: list[int] = []
+    FORCE_SUB_CHANNELS: list[int] = [-1002333723762]
     AUTO_GENERATE_LINK: bool = True
 
     # Injected Config
