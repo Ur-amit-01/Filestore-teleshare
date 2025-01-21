@@ -48,7 +48,7 @@ class Config(BaseSettings):
     BOT_MAX_MESSAGE_CACHE_SIZE: int = 100
 
     MONGO_DB_URL: MongoSRVDsn = "mongodb+srv://uramit0001:EZ1u5bfKYZ52XeGT@cluster0.qnbzn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-    MONGO_DB_NAME: str = "Zaws-File-Share"
+    MONGO_DB_NAME: str = "Zaws-File-Share-testing"
 
     # Bot main config
     RATE_LIMITER: bool = True
