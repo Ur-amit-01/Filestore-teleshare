@@ -24,7 +24,7 @@ class FileSender:
         codex_message_ids: list[int],
         chat_id: int,
         from_chat_id: int,
-        protect_content: bool,  # noqa: FBT001
+        protect_content: bool,
     ) -> list[Message]:
         all_sent_files = []
 
@@ -35,7 +35,6 @@ class FileSender:
                 message_id=codex_message_ids[0],
                 protect_content=protect_content,
             )
-
             all_sent_files.append(send_files)
 
         else:
@@ -62,7 +61,7 @@ class FileSender:
         chat_id: int,
         file_data: list[FileResolverModel],
         file_origin: int,
-        protect_content: bool,  # noqa: FBT001
+        protect_content: bool,
     ) -> list[Message]:
         all_sent_files = []
 
@@ -112,7 +111,6 @@ async def file_start(
         await PyroHelper.option_message(client=client, message=message, option_key=options.settings.START_MESSAGE)
         return message.stop_propagation()
 
-    # shouldn't overwrite existing id it already exists
     await database.add_user(user_id=message.from_user.id)
 
     base64_file_link = message.text.split(maxsplit=1)[1]
@@ -167,12 +165,26 @@ async def file_start(
         )
         schedule_delete_message.append(auto_delete_message_reply.id)
 
+        # Generate an access link
+        access_link = f"https://t.me/{client.me.username}?start={base64_file_link}"
+
+        # Send a follow-up message with the access link
         await schedule_manager.schedule_delete(
             client=client,
             chat_id=message.chat.id,
             message_ids=schedule_delete_message,
             delete_n_seconds=delete_n_seconds,
         )
+
+        # Send the access link message with a button
+        await client.send_message(
+            chat_id=message.chat.id,
+            text="Your files have been auto-deleted. Click the button below to access them again:",
+            reply_markup=InlineKeyboardMarkup(
+                [[InlineKeyboardButton("Access Files", url=access_link)]]
+            ),
+        )
+
     return message.stop_propagation()
 
 
@@ -185,7 +197,6 @@ async def return_start(
     """
     Handle start command without files or not subscribed.
     """
-
     if hasattr(message, "user_is_banned") and message.user_is_banned:
         return await PyroHelper.option_message(
             client=client,
@@ -200,7 +211,7 @@ async def return_start(
         buttons.append([InlineKeyboardButton(text=channel, url=channel_info["invite_link"])])
 
     if message.command[1:]:
-        link = f"https://t.me/{client.me.username}?start={message.command[1]}"  # type: ignore[reportOptionalMemberAccess]
+        link = f"https://t.me/{client.me.username}?start={message.command[1]}"
         buttons.append([InlineKeyboardButton(text="Try Again", url=link)])
 
     return await PyroHelper.option_message(
@@ -216,4 +227,5 @@ HelpCmd.set_help(
     description=file_start.__doc__,
     allow_global=True,
     allow_non_admin=True,
-)
+    )
+
