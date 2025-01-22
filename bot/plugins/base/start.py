@@ -92,7 +92,6 @@ class FileSender:
         return all_sent_files
 
 
-
 @Client.on_message(
     filters.command("start") & filters.private & PyroFilters.subscription(),
     group=0,
@@ -154,7 +153,8 @@ async def file_start(
     if delete_n_seconds != 0:
         schedule_delete_message = [msg.id for msg in send_files]
 
-        auto_delete_message = (
+        # Send the initial message about auto-deletion
+        auto_delete_message_text = (
             options.settings.AUTO_DELETE_MESSAGE.format(int(delete_n_seconds / 60))
             if not isinstance(options.settings.AUTO_DELETE_MESSAGE, int)
             else options.settings.AUTO_DELETE_MESSAGE
@@ -162,7 +162,7 @@ async def file_start(
         auto_delete_message_reply = await PyroHelper.option_message(
             client=client,
             message=message,
-            option_key=auto_delete_message,
+            option_key=auto_delete_message_text,
         )
         schedule_delete_message.append(auto_delete_message_reply.id)
 
@@ -180,17 +180,15 @@ async def file_start(
         # Generate the access link
         access_link = f"https://t.me/{client.me.username}?start={base64_file_link}"
 
-        # Send the access link message with a button
-        await client.send_message(
-            chat_id=message.chat.id,
-            text="Your files have been auto-deleted. Click the button below to access them again:",
+        # Edit the previous auto-delete message to include the access link
+        await auto_delete_message_reply.edit_text(
+            text=f"Your files have been auto-deleted.\n\nYou can access them again using the button below:",
             reply_markup=InlineKeyboardMarkup(
                 [[InlineKeyboardButton("Access Files", url=access_link)]]
             ),
         )
 
     return message.stop_propagation()
-
 
 
 
