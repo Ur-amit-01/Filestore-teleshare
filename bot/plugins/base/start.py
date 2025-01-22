@@ -165,19 +165,16 @@ async def file_start(
         )
         schedule_delete_message.append(auto_delete_message_reply.id)
 
-        # Schedule file deletion
+        # Generate an access link
+        access_link = f"https://t.me/{client.me.username}?start={base64_file_link}"
+
+        # Send a follow-up message with the access link
         await schedule_manager.schedule_delete(
             client=client,
             chat_id=message.chat.id,
             message_ids=schedule_delete_message,
             delete_n_seconds=delete_n_seconds,
         )
-
-        # Wait until the files are deleted, then send the access link
-        await asyncio.sleep(delete_n_seconds)
-        
-        # Generate an access link
-        access_link = f"https://t.me/{client.me.username}?start={base64_file_link}"
 
         # Send the access link message with a button
         await client.send_message(
