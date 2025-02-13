@@ -56,7 +56,7 @@ class Config(BaseSettings):
     ROOT_ADMINS_ID: list[int] = [6803505727,827932553]
     PRIVATE_REQUEST: bool = True
     PROTECT_CONTENT: bool = False
-    FORCE_SUB_CHANNELS: list[int] = [-1002468887113]
+    FORCE_SUB_CHANNELS: list[int] = [-1002468887113,-1002452444734]
     AUTO_GENERATE_LINK: bool = True
 
     # Injected Config
