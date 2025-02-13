@@ -24,7 +24,7 @@ class FileSender:
         codex_message_ids: list[int],
         chat_id: int,
         from_chat_id: int,
-        protect_content: bool,
+        protect_content: bool,  # noqa: FBT001
     ) -> list[Message]:
         all_sent_files = []
 
@@ -35,6 +35,7 @@ class FileSender:
                 message_id=codex_message_ids[0],
                 protect_content=protect_content,
             )
+
             all_sent_files.append(send_files)
 
         else:
@@ -61,7 +62,7 @@ class FileSender:
         chat_id: int,
         file_data: list[FileResolverModel],
         file_origin: int,
-        protect_content: bool,
+        protect_content: bool,  # noqa: FBT001
     ) -> list[Message]:
         all_sent_files = []
 
@@ -111,6 +112,7 @@ async def file_start(
         await PyroHelper.option_message(client=client, message=message, option_key=options.settings.START_MESSAGE)
         return message.stop_propagation()
 
+    # shouldn't overwrite existing id it already exists
     await database.add_user(user_id=message.from_user.id)
 
     base64_file_link = message.text.split(maxsplit=1)[1]
@@ -150,11 +152,18 @@ async def file_start(
 
     delete_n_seconds = options.settings.AUTO_DELETE_SECONDS
 
+    additional_message = None
+    if options.settings.ADDITIONAL_MESSAGE != 0:
+        additional_message = await PyroHelper.option_message(
+            client=client,
+            message=message,
+            option_key=options.settings.ADDITIONAL_MESSAGE,
+        )
+
     if delete_n_seconds != 0:
         schedule_delete_message = [msg.id for msg in send_files]
 
-        # Send the initial message about auto-deletion
-        auto_delete_message_text = (
+        auto_delete_message = (
             options.settings.AUTO_DELETE_MESSAGE.format(int(delete_n_seconds / 60))
             if not isinstance(options.settings.AUTO_DELETE_MESSAGE, int)
             else options.settings.AUTO_DELETE_MESSAGE
@@ -162,11 +171,13 @@ async def file_start(
         auto_delete_message_reply = await PyroHelper.option_message(
             client=client,
             message=message,
-            option_key=auto_delete_message_text,
+            option_key=auto_delete_message,
         )
         schedule_delete_message.append(auto_delete_message_reply.id)
 
-        # Schedule file deletion
+        if additional_message:
+            schedule_delete_message.append(additional_message.id)
+
         await schedule_manager.schedule_delete(
             client=client,
             chat_id=message.chat.id,
@@ -174,22 +185,7 @@ async def file_start(
             delete_n_seconds=delete_n_seconds,
         )
 
-        # Wait until the deletion process is complete
-        await asyncio.sleep(delete_n_seconds)
-
-        # Generate the access link
-        access_link = f"https://t.me/{client.me.username}?start={base64_file_link}"
-
-        # Edit the previous auto-delete message to include the access link
-        await auto_delete_message_reply.edit_text(
-            text=f"Your files have been auto-deleted.\n\nYou can access them again using the button below:",
-            reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton("Access Files", url=access_link)]]
-            ),
-        )
-
     return message.stop_propagation()
-
 
 
 @Client.on_message(filters.command("start") & filters.private, group=69)
@@ -201,6 +197,7 @@ async def return_start(
     """
     Handle start command without files or not subscribed.
     """
+
     if hasattr(message, "user_is_banned") and message.user_is_banned:
         return await PyroHelper.option_message(
             client=client,
@@ -215,7 +212,7 @@ async def return_start(
         buttons.append([InlineKeyboardButton(text=channel, url=channel_info["invite_link"])])
 
     if message.command[1:]:
-        link = f"https://t.me/{client.me.username}?start={message.command[1]}"
+        link = f"https://t.me/{client.me.username}?start={message.command[1]}"  # type: ignore[reportOptionalMemberAccess]
         buttons.append([InlineKeyboardButton(text="Try Again", url=link)])
 
     return await PyroHelper.option_message(
